@@ -25,3 +25,4 @@ char *gets(char *s);
 `gets()` reads a line from `stdin` into the buffer pointed to by `s` until either a terminating newline or EOF is found.
 It is vulnerable to buffer overflow attacks because it does not perform size checking on the buffer.
 If the line is longer than the buffer, it will overwrite the memory following the buffer.
+
