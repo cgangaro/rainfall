@@ -66,8 +66,8 @@ int main(int ac, char **av)
 - The effective UID/GID is used to determine the permissions of the process.
 - The saved UID/GID is used to save the effective UID/GID when the process switches to another user.
 
-We saw previously that the binary has the `setuid` bit set.
-So if we run the binary with the argument `423`, it will execute a shell with the same user and group id as the owner of the binary, which is `level1`.
+We saw previously that the binary has the `setuid` bit set, for the owner of the file: `level1`.
+So if we run the binary with the argument `423`, it will execute a shell with the same user and group id as `level1`.
 
 ### 4. Exploitation
 
