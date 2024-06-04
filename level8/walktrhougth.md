@@ -1,5 +1,5 @@
 # Rainfall Level 8 Guide
-This guide will walk you through the process of finding the password for the `level8` user.
+This guide will walk you through the process of finding the password for the `level9` user.
 
 ## 1. Examine your environment
    
