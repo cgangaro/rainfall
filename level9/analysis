@@ -1,0 +1,38 @@
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+
+class N {
+public:
+    int value;
+    char annotation[100];
+
+    N(int i) : value(i) {}
+
+    void setAnnotation(char* annotation) {
+        std::strncpy(this->annotation, annotation, sizeof(this->annotation) - 1);
+        this->annotation[sizeof(this->annotation) - 1] = '\0';
+    }
+
+    virtual void show() {
+        std::cout << "Annotation: " << annotation << std::endl;
+    }
+};
+
+int main(int argc, char* argv[]) {
+    if (argc <= 1) {
+        std::exit(1);
+    }
+
+    N* n1 = new N(5);
+    N* n2 = new N(6);
+
+    n1->setAnnotation(argv[1]);
+
+    n2->show();
+
+    delete n1;
+    delete n2;
+
+    return 0;
+}
