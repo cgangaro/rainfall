@@ -1,23 +1,21 @@
 #include <cstdlib>
 #include <iostream>
+#include <cstring>
 
 class N {
 public:
-    N(int value) {
-        this->value = value;
-    }
+    char annotation[100];
 
-    void setAnnotation(char* annotation) {
-        this->annotation = annotation;
-    }
+    N(int value) { this->value = value; }
 
+    void setAnnotation(char *str) {
+        memcpy(this->annotation, str, strlen(str));
+    }
     void print() {
         std::cout << "Value: " << value << ", Annotation: " << annotation << std::endl;
     }
-
 private:
     int value;
-    char* annotation;
 };
 
 int main(int argc, char* argv[]) {
@@ -34,4 +32,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
