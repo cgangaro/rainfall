@@ -32,7 +32,7 @@ If successful, the command should trigger a shell:
 ```sh
 $ whoami
 bonus3
-$ cat /home/user/bonus3/.pass
+$ cat /home/user/end/.pass
 ```
 Retrieve the flag or the password from the output.
 
