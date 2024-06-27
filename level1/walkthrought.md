@@ -84,7 +84,3 @@ cat /home/user/level2/.pass
 3. **Offset**: Identified as 76, meaning 76 characters fill the buffer up to the EIP.
 4. **Payload**: Consists of 76 'A's followed by the address of `run` in little-endian format (`\x44\x84\x04\x08`).
 5. **Cat - |**: Keeps stdin open, allowing the launched shell to remain interactive.
-
-## Conclusion
-
-By following these steps, you have successfully exploited a buffer overflow vulnerability to gain shell access on `level1`. This technique uses pattern generation tools and basic knowledge of stack operations and instruction pointers.

@@ -87,7 +87,3 @@ b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
 2. **%n Specifier**: Used to write the number of bytes printed so far to an address specified on the stack.
 3. **Offset Calculation**: Determining where the format string parameters are on the stack to correctly position the address of `m`.
 4. **Exploit String**: Crafted to write the desired value (`64`) to the variable `m`.
-
-## Conclusion
-
-By following these steps, you have successfully exploited a format string vulnerability to gain shell access on `level3`. This technique uses knowledge of format string exploits and basic stack manipulation.

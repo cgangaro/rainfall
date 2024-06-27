@@ -1,4 +1,4 @@
-# Bonus1 Exploit Guide
+# bonus1 Exploit
 
 ## Steps
 
@@ -66,7 +66,3 @@ bonus2
 $ cat /home/user/bonus2/.pass
 ```
 Retrieve the flag from the output.
-
-### Summary
-
-By carefully calculating the overflow value and crafting the payload, we exploit the buffer overflow vulnerability in `bonus1` to execute a shell and retrieve the necessary flag.

@@ -1,4 +1,4 @@
-# `level5` Exploit
+# level5 Exploit
 
 ## Steps
 
@@ -110,7 +110,3 @@ d3b7bf1025225bd715fa8ccb54ef06ca70b9125ac855aeab4878217177f41a31
 2. **%n Specifier**: Used to write the number of characters printed so far to an address specified on the stack.
 3. **Offset Calculation**: Determines where the format string parameters are on the stack to correctly position the address of `o`.
 4. **Exploit String**: Crafted to write the address of `o` in place of the address of `exit`.
-
-## Conclusion
-
-By following these steps, you have successfully exploited a buffer overflow vulnerability to gain shell access on `level5`. This technique uses knowledge of format string exploits and stack manipulation.

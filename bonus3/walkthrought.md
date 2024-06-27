@@ -1,4 +1,4 @@
-# Bonus3 Exploit Guide
+# bonus3 Exploit
 
 ## Steps
 
@@ -35,7 +35,3 @@ bonus3
 $ cat /home/user/end/.pass
 ```
 Retrieve the flag or the password from the output.
-
-### Summary
-
-By understanding how `atoi` affects buffer manipulation and how this interaction can be exploited, we can trick the program into executing a shell by ensuring the comparison between an initially manipulated buffer and the input argument always returns true. This exploitation highlights the importance of validating and sanitizing external inputs to prevent unintended behavior.
