@@ -6,7 +6,7 @@
 int main(int argc, char *argv[]) {
     FILE *file;
     char buffer[65];
-    int value;
+    int index;
 
     // Initialize the buffer with zeros
     memset(buffer, 0, 65);

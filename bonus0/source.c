@@ -6,7 +6,7 @@ void p(char *param_1,char *param_2)
 {
     char *pcVar1;
     // char local_100c [4104];
-    char buffer[4104];
+    char buffer[40];
     
     puts(param_2);
     // read(0,local_100c,0x1000);
