@@ -1,22 +1,19 @@
-void o(void)
-{
-  system("/bin/sh");
-                    /* WARNING: Subroutine does not return */
-  _exit(1);
+#include <stdio.h>
+#include <stdlib.h>
+
+void o() {
+	system("/bin/sh");
+	_exit(1);
 }
 
-void n(void)
-{
-  char buffer [520];
-  
-  fgets(buffer,512,stdin);
-  printf(buffer);
-                    /* WARNING: Subroutine does not return */
-  exit(1);
+int n() {
+    char buffer[520];
+    fgets(buffer, 512, stdin);
+    printf("%s", buffer);
+    exit(1);
 }
 
-void main(void)
-{
-  n();
-  return;
+int main() {
+    n();
+    return 0;
 }
