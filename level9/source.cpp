@@ -11,7 +11,7 @@ public:
     void setAnnotation(char *str) {
         memcpy(this->annotation, str, strlen(str));
     }
-    void print() {
+    virtual void print() {
         std::cout << "Value: " << value << ", Annotation: " << annotation << std::endl;
     }
 private:

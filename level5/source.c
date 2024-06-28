@@ -9,7 +9,7 @@ void o() {
 int n() {
     char buffer[520];
     fgets(buffer, 512, stdin);
-    printf("%s", buffer);
+    printf(buffer);
     exit(1);
 }
 
