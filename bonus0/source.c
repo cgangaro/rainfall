@@ -68,7 +68,7 @@ void pp(char *param_1)
 
 int main(void)
 {
-    char buffer[54];
+    char buffer[42];
 
     pp(buffer);
     puts(buffer);
